@@ -11,7 +11,7 @@ class GameAI:
         return b
 
     def get_valid_moves(self):
-        return [self.board[i] == 0 for i in range(20)]
+        return [self.board[i] == 0 for i in range(16)]
     
     def step(self,action):
         self.board[action] = self.randBricks[self.gameRound*4+self.brickPos]
@@ -34,7 +34,7 @@ class GameAI:
         return (reward,self.gameRound==4)
 
     def reset(self):
-        self.board = [0] * 20
+        self.board = [0] * 16
         self.randBricks = []
         while len(self.randBricks) < 16:
             r = random.randint(1,40)
