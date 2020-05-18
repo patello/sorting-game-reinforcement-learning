@@ -7,7 +7,7 @@ class GameAI:
 
     def get_state(self):
         b = self.board.copy()
-        b.extend(self.currBricks)
+        b.extend(self.currBricks[0:4])
         return b
 
     def get_valid_moves(self):
