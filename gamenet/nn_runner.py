@@ -4,9 +4,6 @@ import numpy as np
 import torch  
 import csv
 
-from azulnet.azul import Azul
-from azulnet.game_runner import GameRunner
-
 random.seed()
 
 # Class till will help the neural network to run properly
@@ -55,7 +52,7 @@ class NNRunner():
         if net_name is not None:
             with open('/results/'+net_name+'.csv', mode="w") as csv_file:
                         result_file = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                        result_file.writerow(["batch"]+list(self.agent.agent_statistics.statistics.keys())+list(self.game_statistics.statistics.keys()))
+                        result_file.writerow(["batch"]+list(self.agent.agent_statistics.statistics.keys()))
         for batch in range(batches):
             rewards = []
             values = []
@@ -80,7 +77,7 @@ class NNRunner():
             if (batch+1) % max(1,(batches/1000)) == 0 and net_name is not None:                    
                 with open('/results/'+net_name+'.csv', mode="a+") as csv_file:
                     result_file = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                    result_file.writerow(np.concatenate([[batch+1],[stat_value[-1] for stat_value in self.agent.agent_statistics.get_stats().values()],[stat_value[-1] for stat_value in self.game_statistics.get_stats().values()]]))
+                    result_file.writerow(np.concatenate([[batch+1],[stat_value[-1] for stat_value in self.agent.agent_statistics.get_stats().values()],]))
             else:
                 if (batch+1) % max(1,(batches/1000)) == 0:
                     print(str(batch+1)+": " + str(self.agent.agent_statistics.get_stats()["reward"][-1]))

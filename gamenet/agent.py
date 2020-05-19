@@ -3,8 +3,8 @@ import torch
 import torch.optim as optim
 
 from torch.autograd import Variable
-from azulnet.model import ActorCritic
-from azulnet.nn_runner import NNRunner
+from gamenet.model import ActorCritic
+from gamenet.nn_runner import NNRunner
 
 class Agent():
 
