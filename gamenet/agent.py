@@ -45,7 +45,7 @@ class Agent():
 
         actor_loss_coeff = 1
         critic_loss_coeff = 0.5
-        entropy_loss_coeff = 0.1
+        entropy_loss_coeff = 0
         
         actor_loss = (-log_probs * advantage.squeeze(1)).mean()
         critic_loss = advantage.pow(2).mean()
