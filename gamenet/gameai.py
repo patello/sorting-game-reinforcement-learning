@@ -37,6 +37,10 @@ class GameAI:
             if self.board[i] == 0 or self.board[i] > self.board[i+1]:
                 reward -= 1
                 break
+        #If only one move is available, do an additional step (the only remaining valid action) and add the reward.
+        if sum(self.get_valid_moves())==1:
+            (lastReward,_)=self.step(self.get_valid_moves().index(True))
+            reward+=lastReward
         return (reward,self.gameRound==4)
 
     def reset(self):
