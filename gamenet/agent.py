@@ -60,7 +60,7 @@ class Agent():
         statistics = {"reward" : np.mean(rewards), "actor_loss" : actor_loss.detach().numpy().squeeze(0), "critic_loss" : critic_loss.detach().numpy().squeeze(0), "entropy_loss":entropy_loss.detach().numpy().squeeze(0), "ac_loss" : ac_loss.detach().numpy().squeeze(0)}
         self.agent_statistics.update(statistics)
 
-    def get_ac_output(self, state, valid_moves, action_selection="Max"):
+    def get_ac_output(self, state, valid_moves, action_selection="Distribution"):
         state = Variable(torch.from_numpy(np.array(state)).float().unsqueeze(0))
         value = self.ac_net.forward_critic(state)
         policy_dist, log_policy_dist = self.ac_net.forward_actor(state,valid_moves)
