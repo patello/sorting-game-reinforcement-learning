@@ -22,7 +22,7 @@ class Agent():
                     self.statisticsBuffer[stat] = np.empty(0)
             return self.statistics
                 
-    def __init__(self, base_net_file=None, base_net="Blue Adam", learning_rate=3e-4, gamma=0.99):
+    def __init__(self, base_net_file=None, base_net="Blue Adam", learning_rate=3e-4, gamma=0.8):
         self.agent_statistics = Agent.AgentStatistics()
         self.learning_rate = learning_rate
         self.gamma = gamma

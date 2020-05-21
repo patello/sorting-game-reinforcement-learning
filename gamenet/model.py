@@ -10,21 +10,35 @@ class IllegalMask(Exception):
     pass
 
 class ActorCritic(nn.Module):
-    def __init__(self, num_inputs, num_actions, hidden_size=180, learning_rate=3e-6):
+    def __init__(self, num_inputs, num_actions, hidden_size=[[72,72],80], learning_rate=3e-6):
         super(ActorCritic, self).__init__()
 
-        self.num_actions = num_actions
-        self.critic_linear1 = nn.Linear(num_inputs, hidden_size)
-        self.critic_linear2 = nn.Linear(hidden_size, 1)
+        if(type(hidden_size)==int):
+            actor_hidden_size = hidden_size
+            critic_hidden_size = hidden_size
+        elif(type(hidden_size)==list and len(hidden_size)==2):
+            actor_hidden_size = hidden_size[0]
+            critic_hidden_size = hidden_size[1]
+        else:
+            raise TypeError(hidden_size)
 
-        self.actor_linear1 = nn.Linear(num_inputs, hidden_size)
-        self.actor_linear2 = nn.Linear(hidden_size, num_actions)
+        self.num_actions = num_actions
+        if type(actor_hidden_size)==int:
+            self.actor_layers = nn.ModuleList([nn.Linear(num_inputs, actor_hidden_size), nn.Linear(actor_hidden_size, num_actions)])
+        else:
+            self.actor_layers = nn.ModuleList([nn.Linear(num_inputs, actor_hidden_size[0])] +[nn.Linear(actor_hidden_size[i], actor_hidden_size[i+1]) for i in range(len(actor_hidden_size)-1)] + [nn.Linear(actor_hidden_size[-1], num_actions)])        
+
+        if type(critic_hidden_size)==int:
+            self.critic_layers = nn.ModuleList([nn.Linear(num_inputs, critic_hidden_size), nn.Linear(critic_hidden_size, 1)])
+        else:
+            self.critic_layers = nn.ModuleList([nn.Linear(num_inputs, critic_hidden_size[0])] +[nn.Linear(critic_hidden_size[i], critic_hidden_size[i+1]) for i in range(len(critic_hidden_size)-1)] + [nn.Linear(critic_hidden_size[-1], 1)])
     
     def forward_critic(self, state_tensor):
-        value = F.relu(self.critic_linear1(state_tensor))
-        value = self.critic_linear2(value)
+        value=state_tensor
+        for i in range(len(self.critic_layers)-1):
+            value = F.relu(self.critic_layers[i](value))
+        return self.critic_layers[-1](value)
 
-        return value
     def forward_actor(self, state_tensor, mask=None):
         #Not used anywhere, consider removing
         if mask is None:
@@ -32,8 +46,10 @@ class ActorCritic(nn.Module):
         #Check that mask consist of at least one "True", otherwise forward will return NaN
         elif np.sum(mask.numpy()) == 0:
             raise IllegalMask
-        policy = F.relu(self.actor_linear1(state_tensor))
-        policy = self.actor_linear2(policy)
+        policy=state_tensor
+        for i in range(len(self.actor_layers)-1):
+            policy = F.relu(self.actor_layers[i](policy))
+        policy = self.actor_layers[-1](policy)
         policy[~mask]=float('-inf')
         policy_dist = F.softmax(policy, dim=1)
         #Also return the built-in log softmax since it is numerically stable
