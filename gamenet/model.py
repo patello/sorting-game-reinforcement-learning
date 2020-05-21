@@ -10,7 +10,7 @@ class IllegalMask(Exception):
     pass
 
 class ActorCritic(nn.Module):
-    def __init__(self, num_inputs, num_actions, hidden_size=[[72,72],80], learning_rate=3e-6):
+    def __init__(self, num_inputs, num_actions, hidden_size=100):
         super(ActorCritic, self).__init__()
 
         if(type(hidden_size)==int):
