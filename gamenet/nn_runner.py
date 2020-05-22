@@ -4,6 +4,7 @@ import numpy as np
 import torch  
 import csv
 import os
+import itertools
 
 random.seed()
 
@@ -49,7 +50,7 @@ class NNRunner():
             (reward,_,_,_)=self.run_episode()
             rewards.append(sum(reward))
         print("Mean reward: " + str(sum(rewards)/len(rewards)))
-    def train(self, result_path=None, model_path=None, batch_size=10, batches=1000):
+    def train(self, result_path=None, model_path=None, batch_size=10, batches=1000, break_cond = None):
         if result_path is not None:
             if os.path.exists(result_path):
                 raise FileExistsError(result_path)
@@ -62,7 +63,14 @@ class NNRunner():
                 raise FileExistsError(model_path)
             else:
                 torch.save(self.agent.ac_net,model_path)
-        for batch in range(batches):
+        if batches > 0:
+            batch_range=range(batches)
+        else:
+        #If batches are -1, then loop infinitly
+            batch_range=itertools.count()
+        if break_cond is not None:
+            prev_reward = 0
+        for batch in batch_range:
             rewards = []
             values = []
             log_probs = []
@@ -90,5 +98,9 @@ class NNRunner():
                         result_file.writerow(np.concatenate([[batch+1],[stat_value[-1] for stat_value in self.agent.agent_statistics.get_stats().values()],]))
                 else:
                     print(str(batch+1)+": " + str(self.agent.agent_statistics.get_stats()["reward"][-1]))
-            if (batch +1)% 1000 == 0 and model_path is not None:
-                torch.save(self.agent.ac_net,model_path)
+                if model_path is not None:
+                    torch.save(self.agent.ac_net,model_path)
+            if (batch+1) % 10000 == 0 and break_cond is not None:
+                if self.agent.agent_statistics.get_stats()["reward"][-1] - prev_reward < break_cond:
+                    break
+                prev_reward=self.agent.agent_statistics.get_stats()["reward"][-1]
