@@ -57,7 +57,7 @@ class Agent():
         self.ac_optimizer.zero_grad()
         ac_loss.backward()
         self.ac_optimizer.step()
-        statistics = {"reward" : np.mean(rewards), "actor_loss" : actor_loss.detach().numpy().squeeze(0), "critic_loss" : critic_loss.detach().numpy().squeeze(0), "entropy_loss":entropy_loss.detach().numpy().squeeze(0), "ac_loss" : ac_loss.detach().numpy().squeeze(0)}
+        statistics = {"actor_loss" : actor_loss.detach().numpy().squeeze(0), "critic_loss" : critic_loss.detach().numpy().squeeze(0), "entropy_loss":entropy_loss.detach().numpy().squeeze(0), "ac_loss" : ac_loss.detach().numpy().squeeze(0)}
         self.agent_statistics.update(statistics)
 
     def get_ac_output(self, state, valid_moves, action_selection=None):

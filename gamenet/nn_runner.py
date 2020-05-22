@@ -43,13 +43,15 @@ class NNRunner():
             log_probs.append(log_prob)
             entropy_terms.append(entropy)
             state = new_state
+        statistics = {"reward":sum(rewards)}
+        self.agent.agent_statistics.update(statistics)
         return rewards, values, log_probs, entropy_terms
     def run_batch(self, episodes):
-        rewards = []
         for episode in range(episodes):
-            (reward,_,_,_)=self.run_episode()
-            rewards.append(sum(reward))
-        print("Mean reward: " + str(sum(rewards)/len(rewards)))
+            self.run_episode()
+        mean_reward = self.agent.agent_statistics.get_stats()["reward"][-1]
+        print("Mean reward: " + str(mean_reward))
+        return mean_reward
     def train(self, result_path=None, model_path=None, batch_size=10, batches=1000, break_cond = None):
         if result_path is not None:
             if os.path.exists(result_path):
@@ -102,5 +104,6 @@ class NNRunner():
                     torch.save(self.agent.ac_net,model_path)
             if (batch+1) % 10000 == 0 and break_cond is not None:
                 if self.agent.agent_statistics.get_stats()["reward"][-1] - prev_reward < break_cond:
-                    break
+                    return (batch+1,self.agent.agent_statistics.get_stats()["reward"][-1])
                 prev_reward=self.agent.agent_statistics.get_stats()["reward"][-1]
+        return (batches,self.agent.agent_statistics.get_stats()["reward"][-1])
