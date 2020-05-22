@@ -2,8 +2,12 @@ from gamenet.agent import Agent
 from gamenet.nn_runner import NNRunner
 from gamenet.gameai import GameAI
 
+import torch
+
 if __name__ == "__main__":
-    agent = Agent(base_net_file="test6",default_action_selection="Max")
-    game_runner = GameAI()
+    model = torch.load("/results/test8.mx")
+    agent = Agent(model=model,default_action_selection="Max")
+    #empty_pos_indicator needs to be parametrized to the same setting as the model was trained with
+    game_runner = GameAI(empty_pos_indicator=-41)
     nnrunner = NNRunner(agent,game_runner)
-    nnrunner.run_batch(100)
+    nnrunner.run_batch(1000)
