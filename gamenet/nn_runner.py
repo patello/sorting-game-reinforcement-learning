@@ -3,6 +3,7 @@ import copy
 import numpy as np
 import torch  
 import csv
+import os
 
 random.seed()
 
@@ -48,11 +49,19 @@ class NNRunner():
             (reward,_,_,_)=self.run_episode()
             rewards.append(sum(reward))
         print("Mean reward: " + str(sum(rewards)/len(rewards)))
-    def train(self, net_name=None, batch_size=1000, batches=1000):
-        if net_name is not None:
-            with open('/results/'+net_name+'.csv', mode="w") as csv_file:
-                        result_file = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                        result_file.writerow(["batch"]+list(self.agent.agent_statistics.statistics.keys()))
+    def train(self, result_path=None, model_path=None, batch_size=10, batches=1000):
+        if result_path is not None:
+            if os.path.exists(result_path):
+                raise FileExistsError(result_path)
+            else:
+                with open(result_path, mode="w") as csv_file:
+                            result_file = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                            result_file.writerow(["batch"]+list(self.agent.agent_statistics.statistics.keys()))
+        if model_path is not None:
+            if os.path.exists(model_path):
+                raise FileExistsError(model_path)
+            else:
+                torch.save(self.agent.ac_net,model_path)
         for batch in range(batches):
             rewards = []
             values = []
@@ -74,12 +83,12 @@ class NNRunner():
                 qvals = np.concatenate((qvals,episode_qvals))
 
             self.agent.update(np.reshape(qvals,(-1,1)), rewards, values, log_probs, entropy_term)
-            if (batch+1) % max(1,(batches/1000)) == 0 and net_name is not None:                    
-                with open('/results/'+net_name+'.csv', mode="a+") as csv_file:
-                    result_file = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
-                    result_file.writerow(np.concatenate([[batch+1],[stat_value[-1] for stat_value in self.agent.agent_statistics.get_stats().values()],]))
-            else:
-                if (batch+1) % max(1,(batches/1000)) == 0:
+            if (batch+1) % 1000 == 0:    
+                if result_path is not None:                
+                    with open(result_path, mode="a+") as csv_file:
+                        result_file = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
+                        result_file.writerow(np.concatenate([[batch+1],[stat_value[-1] for stat_value in self.agent.agent_statistics.get_stats().values()],]))
+                else:
                     print(str(batch+1)+": " + str(self.agent.agent_statistics.get_stats()["reward"][-1]))
-            if (batch +1)% 1000 == 0 and net_name is not None:
-                torch.save(self.agent.ac_net,"/results/"+net_name+".mx")
+            if (batch +1)% 1000 == 0 and model_path is not None:
+                torch.save(self.agent.ac_net,model_path)

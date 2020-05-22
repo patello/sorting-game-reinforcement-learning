@@ -1,8 +1,6 @@
 # Byte-compiled / optimized / DLL files
 __pycache__/
 .pytest_cache/
-result.*
-/neural/models/*
-/neural/results/*
+/results/*
 *pyc
 .vscode
