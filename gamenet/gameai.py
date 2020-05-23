@@ -30,12 +30,12 @@ class GameAI:
         reward = 2
         row = action//4
         for i in range(row*4,row*4+3):
-            if self.board[i] == self.empty_pos_indicator or self.board[i] > self.board[i+1]:
+            if self.board[i] == self.empty_pos_indicator or self.board[i+1] == self.empty_pos_indicator or self.board[i] > self.board[i+1]:
                 reward -= 1
                 break
         col = action%4
         for i in range(col,col+3*4,4):
-            if self.board[i] == self.empty_pos_indicator or self.board[i] > self.board[i+4]:
+            if self.board[i] == self.empty_pos_indicator or self.board[i+4] == self.empty_pos_indicator or self.board[i] > self.board[i+4]:
                 reward -= 1
                 break
         #If only one move is available, do an additional step (the only remaining valid action) and add the reward.
