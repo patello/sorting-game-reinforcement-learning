@@ -55,7 +55,7 @@ class GameAI:
             for i in range(4):
                 brick_one_hot = [0]*40
                 if self.currBricks[i] > 0:
-                    brick_one_hot[self.currBricks[i]] =1
+                    brick_one_hot[self.currBricks[i]-1] =1
                 flat_encoding.extend(brick_one_hot)
             return flat_encoding
         if state_fun == "int":
