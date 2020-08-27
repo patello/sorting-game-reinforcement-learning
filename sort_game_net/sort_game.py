@@ -1,6 +1,6 @@
 import random
 
-class GameAI:
+class SortGame:
 
     def __init__(self, empty_pos_indicator = 0, state_fun = "int"):
         self.empty_pos_indicator = empty_pos_indicator
