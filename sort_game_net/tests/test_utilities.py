@@ -15,3 +15,6 @@ class TestUtilities:
 
     def test_train(self,test_data):
         train(state_fun=test_data["state_fun"],batch_size=2,batches=2)
+
+    def test_train_load(self,test_data):
+        train(model=file_path+"/resources/"+test_data["model_name"],batch_size=2,batches=2)
