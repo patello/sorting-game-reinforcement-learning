@@ -18,3 +18,8 @@ class TestUtilities:
 
     def test_train_load(self,test_data):
         train(model=file_path+"/resources/"+test_data["model_name"],batch_size=2,batches=2)
+    
+    def test_train_save(self,test_data,tmp_path):
+        train(result_path=tmp_path/"res.csv",model_path=tmp_path/"mod.pth",state_fun=test_data["state_fun"],batch_size=2,batches=2)
+        run_batch(model_path=tmp_path/"mod.pth",batches=1)
+        train(model=tmp_path/"mod.pth",batches=1)
