@@ -13,6 +13,7 @@ class ActorCritic(nn.Module):
     def __init__(self, num_inputs, num_actions, hidden_size=100, state_dict=None):
         super(ActorCritic, self).__init__()
 
+        self.hidden_size = hidden_size
         if(type(hidden_size)==int):
             actor_hidden_size = hidden_size
             critic_hidden_size = hidden_size

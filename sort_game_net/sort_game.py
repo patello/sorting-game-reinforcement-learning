@@ -4,6 +4,7 @@ class SortGame:
 
     def __init__(self, empty_pos_indicator = 0, state_fun = "int"):
         self.empty_pos_indicator = empty_pos_indicator
+        self.state_fun = state_fun
         self.reset()
         def get_state_int():
             b = self.board.copy()

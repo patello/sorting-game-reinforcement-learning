@@ -5,6 +5,7 @@ import torch
 import csv
 import os
 import itertools
+import math
 
 random.seed()
 
@@ -93,7 +94,7 @@ class NNRunner():
                 qvals = np.concatenate((qvals,episode_qvals))
 
             self.agent.update(np.reshape(qvals,(-1,1)), rewards, values, log_probs, entropy_term)
-            if (batch+1) % 1000 == 0:    
+            if (batch+1) % min(1000,math.ceil(batches/1000)) == 0:    
                 if result_path is not None:                
                     with open(result_path, mode="a+") as csv_file:
                         result_file = csv.writer(csv_file, delimiter=',', quotechar='"', quoting=csv.QUOTE_MINIMAL)
@@ -101,5 +102,13 @@ class NNRunner():
                 else:
                     print(str(batch+1)+": " + str(self.agent.agent_statistics.get_stats()["reward"][-1]))
                 if model_path is not None:
-                    torch.save(self.agent.ac_net,model_path)
+                    model_dict = {
+                        "state_dict" : self.agent.ac_net.state_dict(),
+                        "state_fun" : self.game_runner.state_fun,
+                        "empty_pos_indicator" : self.game_runner.empty_pos_indicator,
+                        "hidden_size" : self.agent.ac_net.hidden_size,
+                        "gamma" : self.agent.gamma,
+                        "entropy_loss_coeff" : self.agent.entropy_loss_coeff,
+                    }
+                    torch.save(model_dict,model_path)
         return (batches,self.agent.agent_statistics.get_stats()["reward"][-1])
