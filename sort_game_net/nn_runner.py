@@ -102,8 +102,4 @@ class NNRunner():
                     print(str(batch+1)+": " + str(self.agent.agent_statistics.get_stats()["reward"][-1]))
                 if model_path is not None:
                     torch.save(self.agent.ac_net,model_path)
-            if (batch+1) % 10000 == 0 and break_cond is not None:
-                if self.agent.agent_statistics.get_stats()["reward"][-1] - prev_reward < break_cond:
-                    return (batch+1,self.agent.agent_statistics.get_stats()["reward"][-1])
-                prev_reward=self.agent.agent_statistics.get_stats()["reward"][-1]
         return (batches,self.agent.agent_statistics.get_stats()["reward"][-1])
