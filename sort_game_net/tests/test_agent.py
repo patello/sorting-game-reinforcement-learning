@@ -10,8 +10,6 @@ agent = Agent()
 def test_agent_init():
     #Test normal initialization
     agent = Agent()
-    #Test loading of model from file
-    agent = Agent(model=torch.load(file_path+"/resources/example_model.mx"))
 
 def test_agent_update():
     assert(True)
