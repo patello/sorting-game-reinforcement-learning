@@ -23,7 +23,7 @@ agent = Agent(model=model,default_action_selection="Max")
 game_runner = SortGame(empty_pos_indicator=model_dict["empty_pos_indicator"],state_fun=model_dict["state_fun"])
 game_runner.reset()
 
-@app.route('/', methods=['GET', 'POST'])
+@app.route('/api/', methods=['GET', 'POST'])
 def index():
     data = request.get_json()
     if data:
