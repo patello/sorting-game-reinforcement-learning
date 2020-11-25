@@ -3,9 +3,9 @@ import numpy as np
 
 from flask import Flask, Markup, render_template, jsonify, request
 
-import sys
+import os,sys
 
-sys.path.append("/root/projects/gameaiclass/")
+sys.path.append(os.path.dirname(__file__))
 from sort_game_net.agent import Agent
 from sort_game_net.nn_runner import NNRunner
 from sort_game_net.sort_game import SortGame
@@ -13,7 +13,7 @@ from sort_game_net.model import ActorCritic
 
 app = Flask(__name__)
 
-model_dict = torch.load("/root/projects/gameaiclass/pre_trained/binary_encoded.pth")
+model_dict = torch.load(os.path.join(os.path.dirname(__file__), "pre_trained", "binary_encoded.pth"))
 if model_dict["state_fun"]=="encoded":
    input_size=816
 elif model_dict["state_fun"]=="int":
