@@ -3,11 +3,10 @@ import torch
 import torch.optim as optim
 
 from torch.autograd import Variable
-from gamenet.model import ActorCritic
-from gamenet.nn_runner import NNRunner
+from .model import ActorCritic
+from .nn_runner import NNRunner
 
 class Agent():
-
     class AgentStatistics():
         def __init__(self):
             self.statisticsBuffer = {"reward" : np.empty(0), "actor_loss" : np.empty(0), "critic_loss" : np.empty(0), "entropy_loss": np.empty(0), "ac_loss" : np.empty(0)}

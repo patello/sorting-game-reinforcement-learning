@@ -10,9 +10,10 @@ class IllegalMask(Exception):
     pass
 
 class ActorCritic(nn.Module):
-    def __init__(self, num_inputs, num_actions, hidden_size=100):
+    def __init__(self, num_inputs, num_actions, hidden_size=100, state_dict=None):
         super(ActorCritic, self).__init__()
 
+        self.hidden_size = hidden_size
         if(type(hidden_size)==int):
             actor_hidden_size = hidden_size
             critic_hidden_size = hidden_size
@@ -32,7 +33,10 @@ class ActorCritic(nn.Module):
             self.critic_layers = nn.ModuleList([nn.Linear(num_inputs, critic_hidden_size), nn.Linear(critic_hidden_size, 1)])
         else:
             self.critic_layers = nn.ModuleList([nn.Linear(num_inputs, critic_hidden_size[0])] +[nn.Linear(critic_hidden_size[i], critic_hidden_size[i+1]) for i in range(len(critic_hidden_size)-1)] + [nn.Linear(critic_hidden_size[-1], 1)])
-    
+        
+        if state_dict is not None:
+            self.load_state_dict(state_dict)
+
     def forward_critic(self, state_tensor):
         value=state_tensor
         for i in range(len(self.critic_layers)-1):
